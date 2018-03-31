@@ -9,6 +9,7 @@
 import UIKit
 
 class CalculatorViewController: UIViewController {
+    
     @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
     
@@ -29,6 +30,7 @@ class CalculatorViewController: UIViewController {
         statusLabel.text = "" // 清除狀態列上的狀態
         print("Use press %.")
     }
+    
     @IBAction func reverseButtonPress(_ sender: UIButton) {
         result = Double(resultLabel.text!)! * -1 // 反相
         tempString = result.description // 反相結果回存到暫存字串
@@ -38,6 +40,7 @@ class CalculatorViewController: UIViewController {
         statusLabel.text = "" // 清除狀態列上的狀態
         print("Use press +/-.")
     }
+    
     @IBAction func acButtonPress(_ sender: UIButton) {
         // 回復成預設值
         tempString = "0"
@@ -49,6 +52,7 @@ class CalculatorViewController: UIViewController {
         statusLabel.text = ""
         print("Use press AC.")
     }
+    
     @IBAction func operatorButtonPress(_ sender: UIButton) {
         if tempString.count < numberLength { // 限制使用者輸入最多幾位數
             if operatorState != "" && isOperator == false { // Operator為+-x/的哪一個，isOperator需要是false，代表不是重複按Operator
@@ -100,38 +104,45 @@ class CalculatorViewController: UIViewController {
             resultLabel.text = "Error"
         }
     }
+    
     @IBAction func numButtonPress(_ sender: UIButton) {
+        
         let number = sender.currentTitle!
         print("User input number is \(number).")
         
-        if tempString == "0" || isOperator {
-            if tempString == "0" && number == "00"{ // 現在暫存值為0，輸入00還是需要顯示0
-                tempString = "0"
-            }else {
-                tempString = number // 將輸入的新數字儲存到暫存字串
-            }
-            if operatorState == "=" {
-                if number == "00" { // 當=按下後等於重新開始
-                    tempString = "0"
-                }
-                statusLabel.text = "" // 清除狀態列上的"="，使用者重新輸入數字
-                operatorState = "" // 清除operator回到初始值，因為重新計算
-                print("Clean up the status bar information.")
-            }
-            isOperator = false // 現在輸入的是數字，不是operator
+        if tempString.contains(".") && number == "." {  // 已經輸入過小數點
+            print("Already has point.")
         }else {
-            if tempString.count < numberLength { // 限制使用者輸入最多幾位數
+            
+            if tempString == "0" || isOperator {
                 if tempString == "0" && number == "00"{ // 現在暫存值為0，輸入00還是需要顯示0
                     tempString = "0"
                 }else {
-                    tempString += number    // 將輸入的數字加入暫存的字串中
+                    tempString = number // 將輸入的新數字儲存到暫存字串
                 }
+                if operatorState == "=" {
+                    if number == "00" { // 當=按下後等於重新開始
+                        tempString = "0"
+                    }
+                    statusLabel.text = "" // 清除狀態列上的"="，使用者重新輸入數字
+                    operatorState = "" // 清除operator回到初始值，因為重新計算
+                    print("Clean up the status bar information.")
+                }
+                isOperator = false // 現在輸入的是數字，不是operator
             }else {
-                statusLabel.text = "Max \(numberLength) digits."    // 在狀態列顯示超過輸入範圍
-                print("Input over the display range. Max \(numberLength) digits.") // 輸入的數字已經超過處理範圍
+                if tempString.count < numberLength { // 限制使用者輸入最多幾位數
+                    if tempString == "0" && number == "00"{ // 現在暫存值為0，輸入00還是需要顯示0
+                        tempString = "0"
+                    }else {
+                        tempString += number    // 將輸入的數字加入暫存的字串中
+                    }
+                }else {
+                    statusLabel.text = "Max \(numberLength) digits."    // 在狀態列顯示超過輸入範圍
+                    print("Input over the display range. Max \(numberLength) digits.") // 輸入的數字已經超過處理範圍
+                }
             }
+            resultLabel.text = tempString // 顯示在螢幕
         }
-        resultLabel.text = tempString // 顯示在螢幕
     }
     
     override func viewDidLoad() {
